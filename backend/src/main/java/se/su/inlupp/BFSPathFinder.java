@@ -6,8 +6,8 @@ public class BFSPathFinder<T> implements PathFinder<T> {
   public Path<T> findPath(Graph<T> graph, T from, T to) {
      //Test  jhasbjnanaj
     //SAAÖL;ÖLSA;AÖL;As
-    // felix komentar untan konflikt
-    // local changed name
+    // felix komentar
+    // local fisk
     throw new UnsupportedOperationException("Unimplemented method 'findPath'");
   }
 }
