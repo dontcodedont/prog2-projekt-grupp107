@@ -7,7 +7,7 @@ public class BFSPathFinder<T> implements PathFinder<T> {
      //Test  jhasbjnanaj
     //SAAÖL;ÖLSA;AÖL;As
     // felix komentar
-    // local changed name
+    // local fisk
     throw new UnsupportedOperationException("Unimplemented method 'findPath'");
   }
 }
