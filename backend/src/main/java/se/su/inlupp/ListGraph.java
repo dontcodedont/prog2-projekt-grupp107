@@ -18,8 +18,7 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public boolean hasNode(T node) {
-    return adjacencyLists.containsKey(node);
-    // throw new UnsupportedOperationException("Unimplemented method 'hasNode'");
+    throw new UnsupportedOperationException("Unimplemented method 'hasNode'");
   }
 
   @Override
