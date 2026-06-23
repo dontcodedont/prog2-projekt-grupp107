@@ -1,13 +1,10 @@
 package se.su.inlupp;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
 public class ListGraph<T> implements Graph<T> {
-
-  private HashMap adjacencyLists  = new HashMap();
 
   @Override
   public void add(T node) {
