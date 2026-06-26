@@ -41,7 +41,8 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public Set<T> getNodes() {
-    throw new UnsupportedOperationException("Unimplemented method 'getNodes'");
+    return new HashSet<>(adjacencyList.keySet());
+    // throw new UnsupportedOperationException("Unimplemented method 'getNodes'");
   }
 
   @Override
