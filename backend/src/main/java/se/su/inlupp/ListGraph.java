@@ -1,10 +1,10 @@
 package se.su.inlupp;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class ListGraph<T> implements Graph<T> {
+
+  private HashMap<T, Set<T>> adjacencyList = new HashMap<T, Set<T>>();
 
   @Override
   public void add(T node) {
@@ -18,7 +18,8 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public boolean hasNode(T node) {
-    throw new UnsupportedOperationException("Unimplemented method 'hasNode'");
+    return adjacencyList.containsKey(node);
+    // throw new UnsupportedOperationException("Unimplemented method 'hasNode'");
   }
 
   @Override
