@@ -8,7 +8,9 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public void add(T node) {
-    throw new UnsupportedOperationException("Unimplemented method 'add'");
+    if (!hasNode(node)) adjacencyList.put(node, new HashSet<>());
+    return;
+    // throw new UnsupportedOperationException("Unimplemented method 'add'");
   }
 
   @Override
