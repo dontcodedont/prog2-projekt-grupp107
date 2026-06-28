@@ -1,9 +1,15 @@
 package se.su.inlupp;
 
 public class EdgeClass<T> implements Edge<T> {
-    private T node;
+    private final T node;
     private int weight;
-    private String name;
+    private final String name;
+
+    public EdgeClass(T node, int weight, String name) {
+        this.node = node;
+        this.weight = weight;
+        this.name = name;
+    }
 
     @Override
     public T getDestination() {

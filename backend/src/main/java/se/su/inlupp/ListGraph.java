@@ -4,7 +4,7 @@ import java.util.*;
 
 public class ListGraph<T> implements Graph<T> {
 
-  private HashMap<T, Set<T>> adjacencyList = new HashMap<T, Set<T>>();
+  private HashMap<T, Set<EdgeClass>> adjacencyList = new HashMap<T, Set<EdgeClass>>();
 
   @Override
   public void add(T node) {
@@ -26,9 +26,10 @@ public class ListGraph<T> implements Graph<T> {
   @Override
   public void connect(T node1, T node2, String name, int weight) {
     try {
-      // how do I add an edge that has a name and weight into a hashset?
-      // implement the unnamed edge class first
-      // create a private inner class for edge
+      EdgeClass e1 = new EdgeClass(node1, weight, name);
+      EdgeClass e2 = new EdgeClass(node2, weight, name);
+      adjacencyList.get(node1).add(e1);
+      adjacencyList.get(node2).add(e2);
     } catch (NoSuchElementException e) {
       System.out.println("No such node");
     } catch (IllegalArgumentException e) {
