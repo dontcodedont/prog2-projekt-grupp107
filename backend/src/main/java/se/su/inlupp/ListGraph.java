@@ -61,11 +61,34 @@ public class ListGraph<T> implements Graph<T> {
         } catch (IllegalStateException e) {
             System.out.println("No edge exists between nodes");
         }
-        throw new UnsupportedOperationException("Unimplemented method 'disconnect'");
+        // throw new UnsupportedOperationException("Unimplemented method 'disconnect'");
     }
 
     @Override
     public void setConnectionWeight(T node1, T node2, int weight) {
+        try {
+            // might use other methods instead later
+            HashSet<EdgeClass> node1Edges = adjacencyList.get(node1);
+            for (EdgeClass edge : node1Edges) {
+                if (edge.getDestination().equals(node2)) {
+                    EdgeClass newWeightEdge = new EdgeClass(node2, weight, edge.getName());
+                    adjacencyList.get(node1).remove(edge);
+                    adjacencyList.get(node1).add(newWeightEdge);
+                }
+            }
+            HashSet<EdgeClass> node2Edges = adjacencyList.get(node2);
+            for (EdgeClass edge : node2Edges) {
+                if (edge.getDestination().equals(node1)) {
+                    EdgeClass newWeightEdge = new EdgeClass(node1, weight, edge.getName());
+                    adjacencyList.get(node2).remove(edge);
+                    adjacencyList.get(node2).add(newWeightEdge);
+                }
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("No such node");
+        } catch (IllegalStateException e) {
+            System.out.println("No edge exists between nodes");
+        }
         throw new UnsupportedOperationException("Unimplemented method 'setConnectionWeight'");
     }
 
