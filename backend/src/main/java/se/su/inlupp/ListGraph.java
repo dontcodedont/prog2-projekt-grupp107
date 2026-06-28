@@ -89,7 +89,7 @@ public class ListGraph<T> implements Graph<T> {
         } catch (IllegalStateException e) {
             System.out.println("No edge exists between nodes");
         }
-        throw new UnsupportedOperationException("Unimplemented method 'setConnectionWeight'");
+        // throw new UnsupportedOperationException("Unimplemented method 'setConnectionWeight'");
     }
 
     @Override
@@ -100,7 +100,15 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public Collection<Edge<T>> getEdgesFrom(T node) {
-        throw new UnsupportedOperationException("Unimplemented method 'getEdgesFrom'");
+        try {
+            // might be a disaster due to not understanding <T>
+            Collection<Edge<T>> edgeClasses = (Collection<Edge<T>>)(Collection<T>) adjacencyList.get(node);
+            return edgeClasses;
+        } catch (NoSuchElementException e) {
+            System.out.println("No such node");
+            return null; // said missing return statement when having a return in the try block
+        }
+        // throw new UnsupportedOperationException("Unimplemented method 'getEdgesFrom'");
     }
 
     @Override
