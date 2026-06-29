@@ -113,7 +113,18 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public Edge<T> getEdgeBetween(T node1, T node2) {
-        throw new UnsupportedOperationException("Unimplemented method 'getEdgeBetween'");
+        try {
+            for (EdgeClass edge : adjacencyList.get(node1)) {
+                if (edge.getDestination().equals(node2)) {
+                    return edge;
+                }
+            }
+            return null;
+        } catch (NoSuchElementException e) {
+            System.out.println("No such node");
+            return null; // said missing return statement when having a return in the try block
+        }
+        // throw new UnsupportedOperationException("Unimplemented method 'getEdgeBetween'");
     }
 
     @Override
