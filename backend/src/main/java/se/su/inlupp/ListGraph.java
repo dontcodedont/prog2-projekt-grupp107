@@ -37,10 +37,10 @@ public class ListGraph<T> implements Graph<T> {
     @Override
     public void connect(T node1, T node2, String name, int weight) {
         try {
-            EdgeClass e1 = new EdgeClass(node1, weight, name);
-            EdgeClass e2 = new EdgeClass(node2, weight, name);
-            adjacencyList.get(node1).add(e1); // big problem, should be node1 connected to e2 check if it breaks anything else
-            adjacencyList.get(node2).add(e2);
+            EdgeClass edge1 = new EdgeClass(node1, weight, name);
+            EdgeClass edge2 = new EdgeClass(node2, weight, name);
+            adjacencyList.get(node1).add(edge2); // big problem, should be node1 connected to e2 check if it breaks anything else
+            adjacencyList.get(node2).add(edge1);
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
         } catch (IllegalArgumentException e) {
@@ -55,6 +55,7 @@ public class ListGraph<T> implements Graph<T> {
     public void disconnect(T node1, T node2) {
         try {
             // Might cause problems when run multiple times or when a node counts as not existing anymore
+            // Might have made bad copies (referring to the same list instead of a copy)
             HashSet<EdgeClass> node1Edges = adjacencyList.get(node1);
             for (EdgeClass edge : node1Edges) {
                 if (edge.getDestination().equals(node2)) {
@@ -79,6 +80,7 @@ public class ListGraph<T> implements Graph<T> {
     public void setConnectionWeight(T node1, T node2, int weight) {
         try {
             // might use other methods instead later
+            // might have made bad copies (referring to the same list instead of a copy)
             HashSet<EdgeClass> node1Edges = adjacencyList.get(node1);
             for (EdgeClass edge : node1Edges) {
                 if (edge.getDestination().equals(node2)) {
