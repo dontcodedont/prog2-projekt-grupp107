@@ -14,7 +14,18 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public void remove(T node) {
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        try {
+            if (adjacencyList.get(node).isEmpty()) {
+                adjacencyList.remove(node);
+            } else {
+                for (EdgeClass edge : adjacencyList.get(node)) {
+                    // edge.getDestination() // got to fix connect first!
+                }
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("No such node");
+        }
+        // throw new UnsupportedOperationException("Unimplemented method 'remove'");
     }
 
     @Override
@@ -28,7 +39,7 @@ public class ListGraph<T> implements Graph<T> {
         try {
             EdgeClass e1 = new EdgeClass(node1, weight, name);
             EdgeClass e2 = new EdgeClass(node2, weight, name);
-            adjacencyList.get(node1).add(e1);
+            adjacencyList.get(node1).add(e1); // big problem, should be node1 connected to e2 check if it breaks anything else
             adjacencyList.get(node2).add(e2);
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
