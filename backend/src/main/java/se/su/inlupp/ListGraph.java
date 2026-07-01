@@ -146,6 +146,18 @@ public class ListGraph<T> implements Graph<T> {
         // throw new UnsupportedOperationException("Unimplemented method 'getEdgeBetween'");
     }
 
+    public String toString() {
+        String graph = "Graph adjacency list:\n";
+        for (T node : adjacencyList.keySet()) {
+            graph += "Node " + node + " is connected to node: "; // the node of type <T> might not get represented well as a String
+            for (EdgeClass edge : adjacencyList.get(node)) {
+                graph += edge.getDestination() + " ";
+            }
+            graph += "\n";
+        }
+        return graph;
+    }
+
     @Override
     public Iterator<T> iterator() {
         throw new UnsupportedOperationException("Unimplemented method 'iterator'");
