@@ -17,10 +17,16 @@ public class ListGraph<T> implements Graph<T> {
         try {
             if (adjacencyList.get(node).isEmpty()) {
                 adjacencyList.remove(node);
-            } else {
+            } else { // might need to crate a copy of adjacencyList to search through
                 for (EdgeClass edge : adjacencyList.get(node)) {
-                    // edge.getDestination() // got to fix connect first!
+                    for (EdgeClass edge2 : adjacencyList.get(edge.getDestination())) { // potential fault in logic -> will always return null
+                        if (edge2.getDestination().equals(node)) {
+                            adjacencyList.get(edge.getDestination()).remove(edge2);
+                        }
+                    }
+                    adjacencyList.get(node).remove(edge);
                 }
+                adjacencyList.remove(node);
             }
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
