@@ -160,7 +160,8 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public Iterator<T> iterator() {
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+        return adjacencyList.keySet().iterator();
+        // throw new UnsupportedOperationException("Unimplemented method 'iterator'");
     }
 }
 
