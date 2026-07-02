@@ -4,7 +4,7 @@ import java.util.*;
 
 public class ListGraph<T> implements Graph<T> {
 
-    private HashMap<T, HashSet<EdgeClass>> adjacencyList = new HashMap<T, HashSet<EdgeClass>>();
+    private HashMap<T, HashSet<EdgeClass>> adjacencyList = new HashMap<>(); // is hashset not initialized due to no "new"?
 
     @Override
     public void add(T node) {
@@ -15,19 +15,20 @@ public class ListGraph<T> implements Graph<T> {
     @Override
     public void remove(T node) {
         try {
-            if (adjacencyList.get(node).isEmpty()) {
-                adjacencyList.remove(node);
-            } else { // might need to crate a copy of adjacencyList to search through
-                for (EdgeClass edge : adjacencyList.get(node)) {
-                    for (EdgeClass edge2 : adjacencyList.get(edge.getDestination())) { // potential fault in logic -> will always return null
-                        if (edge2.getDestination().equals(node)) {
-                            adjacencyList.get(edge.getDestination()).remove(edge2);
+            // nothing gets thrown NoSuchElementException doesn't get caught
+                if (adjacencyList.get(node).isEmpty()) {
+                    adjacencyList.remove(node);
+                } else { // might need to crate a copy of adjacencyList to search through
+                    for (EdgeClass edge : adjacencyList.get(node)) {
+                        for (EdgeClass edge2 : adjacencyList.get(edge.getDestination())) { // potential fault in logic -> will always return null
+                            if (edge2.getDestination().equals(node)) {
+                                adjacencyList.get(edge.getDestination()).remove(edge2);
+                            }
                         }
+                        adjacencyList.get(node).remove(edge);
                     }
-                    adjacencyList.get(node).remove(edge);
+                    adjacencyList.remove(node);
                 }
-                adjacencyList.remove(node);
-            }
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
         }
@@ -54,7 +55,7 @@ public class ListGraph<T> implements Graph<T> {
         } catch (IllegalStateException e) {
             System.out.println("nodes are already connected");
         }
-        throw new UnsupportedOperationException("Unimplemented method 'connect'");
+        // throw new UnsupportedOperationException("Unimplemented method 'connect'");
     }
 
     @Override
