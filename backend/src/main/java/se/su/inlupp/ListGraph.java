@@ -4,7 +4,7 @@ import java.util.*;
 
 public class ListGraph<T> implements Graph<T> {
 
-    private HashMap<T, HashSet<EdgeClass>> adjacencyList = new HashMap<>(); // is hashset not initialized due to no "new"?
+    private HashMap<T, HashSet<EdgeClass<T>>> adjacencyList = new HashMap<>(); // is hashset not initialized due to no "new"?
 
     @Override
     public void add(T node) {
@@ -16,19 +16,22 @@ public class ListGraph<T> implements Graph<T> {
     public void remove(T node) {
         try {
             // nothing gets thrown NoSuchElementException doesn't get caught
-                if (adjacencyList.get(node).isEmpty()) {
-                    adjacencyList.remove(node);
-                } else { // might need to crate a copy of adjacencyList to search through
-                    for (EdgeClass edge : adjacencyList.get(node)) {
-                        for (EdgeClass edge2 : adjacencyList.get(edge.getDestination())) { // potential fault in logic -> will always return null
-                            if (edge2.getDestination().equals(node)) {
-                                adjacencyList.get(edge.getDestination()).remove(edge2);
-                            }
+            if (!adjacencyList.containsKey(node)) {
+                throw new NoSuchElementException("No such node");
+            }
+            if (/*adjacencyList.get(node) == null || */adjacencyList.get(node).isEmpty()) {
+                adjacencyList.remove(node);
+            } else { // might need to crate a copy of adjacencyList to search through
+                for (EdgeClass<T> edge : adjacencyList.get(node)) {
+                    for (EdgeClass<T> edge2 : adjacencyList.get(edge.getDestination())) { // potential fault in logic -> will always return null
+                        if (edge2.getDestination().equals(node)) {
+                            adjacencyList.get(edge.getDestination()).remove(edge2);
                         }
-                        adjacencyList.get(node).remove(edge);
                     }
-                    adjacencyList.remove(node);
+                    adjacencyList.get(node).remove(edge);
                 }
+                adjacencyList.remove(node);
+            }
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
         }
@@ -44,10 +47,12 @@ public class ListGraph<T> implements Graph<T> {
     @Override
     public void connect(T node1, T node2, String name, int weight) {
         try {
-            EdgeClass edge1 = new EdgeClass(node1, weight, name);
-            EdgeClass edge2 = new EdgeClass(node2, weight, name);
-            adjacencyList.get(node1).add(edge2); // big problem, should be node1 connected to e2 check if it breaks anything else
-            adjacencyList.get(node2).add(edge1);
+            EdgeClass<T> edge1 = new EdgeClass<T>(node1, weight, name);
+            EdgeClass<T> edge2 = new EdgeClass<T>(node2, weight, name);
+            adjacencyList.computeIfAbsent(node1, k -> new HashSet<>()).add(edge2);
+            adjacencyList.computeIfAbsent(node2, k -> new HashSet<>()).add(edge1);
+            // adjacencyList.get(node1).add(edge2);
+            // adjacencyList.get(node2).add(edge1);
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
         } catch (IllegalArgumentException e) {
@@ -63,14 +68,14 @@ public class ListGraph<T> implements Graph<T> {
         try {
             // Might cause problems when run multiple times or when a node counts as not existing anymore
             // Might have made bad copies (referring to the same list instead of a copy)
-            HashSet<EdgeClass> node1Edges = adjacencyList.get(node1);
-            for (EdgeClass edge : node1Edges) {
+            HashSet<EdgeClass<T>> node1Edges = adjacencyList.get(node1);
+            for (EdgeClass<T> edge : node1Edges) {
                 if (edge.getDestination().equals(node2)) {
                     adjacencyList.get(node1).remove(edge);
                 }
             }
-            HashSet<EdgeClass> node2Edges = adjacencyList.get(node2);
-            for (EdgeClass edge : node2Edges) {
+            HashSet<EdgeClass<T>> node2Edges = adjacencyList.get(node2);
+            for (EdgeClass<T> edge : node2Edges) {
                 if (edge.getDestination().equals(node1)) {
                     adjacencyList.get(node2).remove(edge);
                 }
@@ -88,18 +93,18 @@ public class ListGraph<T> implements Graph<T> {
         try {
             // might use other methods instead later
             // might have made bad copies (referring to the same list instead of a copy)
-            HashSet<EdgeClass> node1Edges = adjacencyList.get(node1);
-            for (EdgeClass edge : node1Edges) {
+            HashSet<EdgeClass<T>> node1Edges = adjacencyList.get(node1);
+            for (EdgeClass<T> edge : node1Edges) {
                 if (edge.getDestination().equals(node2)) {
-                    EdgeClass newWeightEdge = new EdgeClass(node2, weight, edge.getName());
+                    EdgeClass<T> newWeightEdge = new EdgeClass<T>(node2, weight, edge.getName());
                     adjacencyList.get(node1).remove(edge);
                     adjacencyList.get(node1).add(newWeightEdge);
                 }
             }
-            HashSet<EdgeClass> node2Edges = adjacencyList.get(node2);
-            for (EdgeClass edge : node2Edges) {
+            HashSet<EdgeClass<T>> node2Edges = adjacencyList.get(node2);
+            for (EdgeClass<T> edge : node2Edges) {
                 if (edge.getDestination().equals(node1)) {
-                    EdgeClass newWeightEdge = new EdgeClass(node1, weight, edge.getName());
+                    EdgeClass<T> newWeightEdge = new EdgeClass<T>(node1, weight, edge.getName());
                     adjacencyList.get(node2).remove(edge);
                     adjacencyList.get(node2).add(newWeightEdge);
                 }
@@ -122,7 +127,7 @@ public class ListGraph<T> implements Graph<T> {
     public Collection<Edge<T>> getEdgesFrom(T node) {
         try {
             // might be a disaster due to not understanding <T>
-            Collection<Edge<T>> edgeClasses = (Collection<Edge<T>>)(Collection<T>) adjacencyList.get(node);
+            Collection<Edge<T>> edgeClasses = (Collection<Edge<T>>) (Collection<T>) adjacencyList.get(node);
             return edgeClasses;
         } catch (NoSuchElementException e) {
             System.out.println("No such node");
@@ -134,7 +139,7 @@ public class ListGraph<T> implements Graph<T> {
     @Override
     public Edge<T> getEdgeBetween(T node1, T node2) {
         try {
-            for (EdgeClass edge : adjacencyList.get(node1)) {
+            for (EdgeClass<T> edge : adjacencyList.get(node1)) {
                 if (edge.getDestination().equals(node2)) {
                     return edge;
                 }
@@ -151,7 +156,7 @@ public class ListGraph<T> implements Graph<T> {
         String graph = "Graph adjacency list:\n";
         for (T node : adjacencyList.keySet()) {
             graph += "Node " + node + " is connected to node: "; // the node of type <T> might not get represented well as a String
-            for (EdgeClass edge : adjacencyList.get(node)) {
+            for (EdgeClass<T> edge : adjacencyList.get(node)) {
                 graph += edge.getDestination() + " ";
             }
             graph += "\n";
