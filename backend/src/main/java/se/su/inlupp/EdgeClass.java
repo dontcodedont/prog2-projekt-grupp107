@@ -24,9 +24,12 @@ public class EdgeClass<T> implements Edge<T> {
     @Override
     public void setWeight(int weight) {
         try {
+            if (weight < 0) {
+                throw new IllegalArgumentException();
+            }
             this.weight = weight;
         } catch (IllegalArgumentException e) {
-            System.out.println("weight cannot be negative");
+            System.out.println("The weight of an edge cannot be negative.");
         }
     }
 
