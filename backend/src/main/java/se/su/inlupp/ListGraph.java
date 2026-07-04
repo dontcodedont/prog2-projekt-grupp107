@@ -13,23 +13,16 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     @Override
-    public void remove(T node) {
+    public void remove(T node) { //TODO DO NOT PUT EXCEPTION CHECKS INSIDE TRY-CATCH BLOCKS!!!
         try {
-            // nothing gets thrown NoSuchElementException doesn't get caught
+            // nothing gets thrown NoSuchElementException doesn't get caught maybe because of ConcurrentModificationException?
             if (!hasNode(node)) {
                 throw new NoSuchElementException();
             }
             if (/*adjacencyList.get(node) == null || */adjacencyList.get(node).isEmpty()) {
                 adjacencyList.remove(node);
             } else { // might need to crate a copy of adjacencyList to search through
-                for (EdgeClass<T> edge : adjacencyList.get(node)) {
-                    for (EdgeClass<T> edge2 : adjacencyList.get(edge.getDestination())) { // potential fault in logic -> will always return null
-                        if (edge2.getDestination().equals(node)) {
-                            adjacencyList.get(edge.getDestination()).remove(edge2);
-                        }
-                    }
-                    adjacencyList.get(node).remove(edge);
-                }
+                adjacencyList.values().forEach(nodes -> nodes.removeIf(edge -> edge.getDestination().equals(node)));
                 adjacencyList.remove(node);
             }
         } catch (NoSuchElementException e) {
@@ -108,7 +101,7 @@ public class ListGraph<T> implements Graph<T> {
         try {
             // might use other methods instead later
             // might have made bad copies (referring to the same list instead of a copy)
-            if (!hasNode(node1) || !hasNode(node2) || getEdgeBetween(node1,node2) == null) {
+            if (!hasNode(node1) || !hasNode(node2) || getEdgeBetween(node1, node2) == null) {
                 throw new NoSuchElementException();
             }
             if (weight < 0) {
@@ -161,17 +154,17 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public Edge<T> getEdgeBetween(T node1, T node2) {
-        try {
-            if (!hasNode(node1) || !hasNode(node2)) {
-                throw new NoSuchElementException();
+        if (!hasNode(node1) || !hasNode(node2)) {
+            throw new NoSuchElementException("One or both nodes are missing in the graph.");
+        }
+        var edges = adjacencyList.get(node1);
+        if (edges == null) {
+            return null;
+        }
+        for (EdgeClass<T> edge : edges) {
+            if (edge.getDestination().equals(node2)) {
+                return edge;
             }
-            for (EdgeClass<T> edge : adjacencyList.get(node1)) {
-                if (edge.getDestination().equals(node2)) {
-                    return edge;
-                }
-            }
-        } catch (NoSuchElementException e) {
-            System.out.println("One or both nodes are missing in the graph.");
         }
         return null;
         // throw new UnsupportedOperationException("Unimplemented method 'getEdgeBetween'");
