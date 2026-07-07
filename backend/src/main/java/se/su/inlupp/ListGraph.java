@@ -13,20 +13,15 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     @Override
-    public void remove(T node) { //TODO DO NOT PUT EXCEPTION CHECKS INSIDE TRY-CATCH BLOCKS!!!
-        try {
-            // nothing gets thrown NoSuchElementException doesn't get caught maybe because of ConcurrentModificationException?
-            if (!hasNode(node)) {
-                throw new NoSuchElementException();
-            }
-            if (/*adjacencyList.get(node) == null || */adjacencyList.get(node).isEmpty()) {
-                adjacencyList.remove(node);
-            } else { // might need to crate a copy of adjacencyList to search through
-                adjacencyList.values().forEach(nodes -> nodes.removeIf(edge -> edge.getDestination().equals(node)));
-                adjacencyList.remove(node);
-            }
-        } catch (NoSuchElementException e) {
-            System.out.println("The node is not in the graph.");
+    public void remove(T node) {
+        if (!hasNode(node)) {
+            throw new NoSuchElementException("The node is not in the graph.");
+        }
+        if (adjacencyList.get(node).isEmpty()) {
+            adjacencyList.remove(node);
+        } else { // no need to crate a copy of adjacencyList to search through since lambda-expressions handle it
+            adjacencyList.values().forEach(nodes -> nodes.removeIf(edge -> edge.getDestination().equals(node)));
+            adjacencyList.remove(node);
         }
         // throw new UnsupportedOperationException("Unimplemented method 'remove'");
     }
@@ -39,95 +34,57 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public void connect(T node1, T node2, String name, int weight) {
-        try {
-            if (!hasNode(node1) || !hasNode(node2)) {
-                throw new NoSuchElementException();
-            }
-            if (weight < 0) {
-                throw new IllegalArgumentException();
-            }
-            if (getEdgeBetween(node1, node2) != null) {
-                throw new IllegalStateException();
-            }
-            EdgeClass<T> edge1 = new EdgeClass<T>(node1, weight, name);
-            EdgeClass<T> edge2 = new EdgeClass<T>(node2, weight, name);
-            adjacencyList.computeIfAbsent(node1, k -> new HashSet<>()).add(edge2);
-            adjacencyList.computeIfAbsent(node2, k -> new HashSet<>()).add(edge1);
-            // adjacencyList.get(node1).add(edge2);
-            // adjacencyList.get(node2).add(edge1);
-        } catch (NoSuchElementException e) {
-            System.out.println("One or both nodes are not in the graph.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("The weight cannot be negative.");
-        } catch (IllegalStateException e) {
-            System.out.println("The nodes are already connected.");
+        if (!hasNode(node1) || !hasNode(node2)) {
+            throw new NoSuchElementException("One or both nodes are not in the graph.");
         }
+        if (weight < 0) {
+            throw new IllegalArgumentException("The weight cannot be negative.");
+        }
+        if (getEdgeBetween(node1, node2) != null) {
+            throw new IllegalStateException("The nodes are already connected.");
+        }
+        EdgeClass<T> edge1 = new EdgeClass<T>(node1, weight, name);
+        EdgeClass<T> edge2 = new EdgeClass<T>(node2, weight, name);
+        adjacencyList.computeIfAbsent(node1, k -> new HashSet<>()).add(edge2);
+        adjacencyList.computeIfAbsent(node2, k -> new HashSet<>()).add(edge1);
         // throw new UnsupportedOperationException("Unimplemented method 'connect'");
     }
 
     @Override
     public void disconnect(T node1, T node2) {
-        try {
-            // Might cause problems when run multiple times or when a node counts as not existing anymore
-            // Might have created bad copies (referring to the same list instead of a copy)
-            if (!hasNode(node1) || !hasNode(node2)) {
-                throw new NoSuchElementException();
+        if (!hasNode(node1) || !hasNode(node2)) {
+            throw new NoSuchElementException("One or both nodes are not in the graph.");
+        }
+        if (getEdgeBetween(node1, node2) == null) {
+            throw new IllegalStateException("No edge exists between both nodes");
+        }
+        HashSet<EdgeClass<T>> node1Edges = new HashSet<>(adjacencyList.get(node1));
+        for (EdgeClass<T> edge : node1Edges) {
+            if (edge.getDestination().equals(node2)) {
+                adjacencyList.get(node1).remove(edge);
             }
-            if (getEdgeBetween(node1, node2) == null) {
-                throw new IllegalStateException();
+        }
+        HashSet<EdgeClass<T>> node2Edges = new HashSet<>(adjacencyList.get(node2));
+        for (EdgeClass<T> edge : node2Edges) {
+            if (edge.getDestination().equals(node1)) {
+                adjacencyList.get(node2).remove(edge);
             }
-            HashSet<EdgeClass<T>> node1Edges = adjacencyList.get(node1);
-            for (EdgeClass<T> edge : node1Edges) {
-                if (edge.getDestination().equals(node2)) {
-                    adjacencyList.get(node1).remove(edge);
-                }
-            }
-            HashSet<EdgeClass<T>> node2Edges = adjacencyList.get(node2);
-            for (EdgeClass<T> edge : node2Edges) {
-                if (edge.getDestination().equals(node1)) {
-                    adjacencyList.get(node2).remove(edge);
-                }
-            }
-        } catch (NoSuchElementException e) {
-            System.out.println("One or both nodes are not in the graph.");
-        } catch (IllegalStateException e) {
-            System.out.println("No edge exists between both nodes");
         }
         // throw new UnsupportedOperationException("Unimplemented method 'disconnect'");
     }
 
     @Override
     public void setConnectionWeight(T node1, T node2, int weight) {
-        try {
-            // might use other methods instead later
-            // might have made bad copies (referring to the same list instead of a copy)
-            if (!hasNode(node1) || !hasNode(node2) || getEdgeBetween(node1, node2) == null) {
-                throw new NoSuchElementException();
-            }
-            if (weight < 0) {
-                throw new IllegalArgumentException();
-            }
-            HashSet<EdgeClass<T>> node1Edges = adjacencyList.get(node1);
-            for (EdgeClass<T> edge : node1Edges) {
-                if (edge.getDestination().equals(node2)) {
-                    EdgeClass<T> newWeightEdge = new EdgeClass<T>(node2, weight, edge.getName());
-                    adjacencyList.get(node1).remove(edge);
-                    adjacencyList.get(node1).add(newWeightEdge);
-                }
-            }
-            HashSet<EdgeClass<T>> node2Edges = adjacencyList.get(node2);
-            for (EdgeClass<T> edge : node2Edges) {
-                if (edge.getDestination().equals(node1)) {
-                    EdgeClass<T> newWeightEdge = new EdgeClass<T>(node1, weight, edge.getName());
-                    adjacencyList.get(node2).remove(edge);
-                    adjacencyList.get(node2).add(newWeightEdge);
-                }
-            }
-        } catch (NoSuchElementException e) {
-            System.out.println("One or both nodes are not in the graph, or no edge exists between both nodes.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("The weight of an edge cannot be negative.");
+        if (!hasNode(node1) || !hasNode(node2) || getEdgeBetween(node1, node2) == null) {
+            throw new NoSuchElementException("One or both nodes are not in the graph, or no edge exists between both nodes.");
         }
+        if (weight < 0) {
+            throw new IllegalArgumentException("The weight of an edge cannot be negative.");
+        }
+        EdgeClass<T> edge1to2 = (EdgeClass<T>) getEdgeBetween(node1, node2);
+        EdgeClass<T> edge2to1 = (EdgeClass<T>) getEdgeBetween(node2, node1);
+        edge1to2.setWeight(weight);
+        edge2to1.setWeight(weight);
         // throw new UnsupportedOperationException("Unimplemented method 'setConnectionWeight'");
     }
 
@@ -139,16 +96,12 @@ public class ListGraph<T> implements Graph<T> {
 
     @Override
     public Collection<Edge<T>> getEdgesFrom(T node) {
-        try {
-            if (!hasNode(node)) {
-                throw new NoSuchElementException();
-            }
-            Collection<Edge<T>> edgeClasses = (Collection<Edge<T>>) (Collection<T>) adjacencyList.get(node);// might be a disaster due to not understanding <T>
-            return edgeClasses;
-        } catch (NoSuchElementException e) {
-            System.out.println("The node is not in the graph.");
+
+        if (!hasNode(node)) {
+            throw new NoSuchElementException("The node is not in the graph.");
         }
-        return Collections.emptySet();// might be a disaster due to not understanding <T>
+        Collection<Edge<T>> edgeClasses = (Collection<Edge<T>>) (Collection<T>) adjacencyList.get(node);// might be a bad due to not understanding <T>
+        return edgeClasses;
         // throw new UnsupportedOperationException("Unimplemented method 'getEdgesFrom'");
     }
 
