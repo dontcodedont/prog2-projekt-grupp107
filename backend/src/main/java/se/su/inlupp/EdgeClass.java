@@ -34,6 +34,6 @@ public class EdgeClass<T> implements Edge<T> {
     }
 
     public String toString() {
-        return "Edge: " + getName() + " Weight: " + weight + " Towards: " + node;
+        return "till " + node + " med " + getName() + " tar " + weight;
     }
 }

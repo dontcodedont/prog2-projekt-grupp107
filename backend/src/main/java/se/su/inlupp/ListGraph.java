@@ -124,14 +124,14 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public String toString() {
-        String graph = "Graph adjacency list:\n";
+        String graph = "[";
         for (T node : adjacencyList.keySet()) {
-            graph += "Node " + node + " is connected to node: "; // the node of type <T> might not get represented well as a String
+            graph += node + ", ";
             for (EdgeClass<T> edge : adjacencyList.get(node)) {
-                graph += edge.getDestination() + " ";
+                graph += edge.toString() + ", "; // ugly commas
             }
-            graph += "\n";
         }
+        graph += "]";
         return graph;
     }
 
