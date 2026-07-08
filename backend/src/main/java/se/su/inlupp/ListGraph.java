@@ -4,12 +4,11 @@ import java.util.*;
 
 public class ListGraph<T> implements Graph<T> {
 
-    private HashMap<T, HashSet<EdgeClass<T>>> adjacencyList = new HashMap<>(); // is hashset not initialized due to no "new"?
+    private final HashMap<T, HashSet<EdgeClass<T>>> adjacencyList = new HashMap<>();
 
     @Override
     public void add(T node) {
         if (!hasNode(node)) adjacencyList.put(node, new HashSet<>());
-        // throw new UnsupportedOperationException("Unimplemented method 'add'");
     }
 
     @Override
@@ -19,17 +18,15 @@ public class ListGraph<T> implements Graph<T> {
         }
         if (adjacencyList.get(node).isEmpty()) {
             adjacencyList.remove(node);
-        } else { // no need to crate a copy of adjacencyList to search through since lambda-expressions handle it
+        } else { // no need to crate a copy of adjacencyList to search through since the lambda-expression handles it
             adjacencyList.values().forEach(nodes -> nodes.removeIf(edge -> edge.getDestination().equals(node)));
             adjacencyList.remove(node);
         }
-        // throw new UnsupportedOperationException("Unimplemented method 'remove'");
     }
 
     @Override
     public boolean hasNode(T node) {
         return adjacencyList.containsKey(node);
-        // throw new UnsupportedOperationException("Unimplemented method 'hasNode'");
     }
 
     @Override
@@ -43,11 +40,10 @@ public class ListGraph<T> implements Graph<T> {
         if (getEdgeBetween(node1, node2) != null) {
             throw new IllegalStateException("The nodes are already connected.");
         }
-        EdgeClass<T> edge1 = new EdgeClass<T>(node1, weight, name);
-        EdgeClass<T> edge2 = new EdgeClass<T>(node2, weight, name);
+        EdgeClass<T> edge1 = new EdgeClass<>(node1, weight, name);
+        EdgeClass<T> edge2 = new EdgeClass<>(node2, weight, name);
         adjacencyList.computeIfAbsent(node1, k -> new HashSet<>()).add(edge2);
         adjacencyList.computeIfAbsent(node2, k -> new HashSet<>()).add(edge1);
-        // throw new UnsupportedOperationException("Unimplemented method 'connect'");
     }
 
     @Override
@@ -70,7 +66,6 @@ public class ListGraph<T> implements Graph<T> {
                 adjacencyList.get(node2).remove(edge);
             }
         }
-        // throw new UnsupportedOperationException("Unimplemented method 'disconnect'");
     }
 
     @Override
@@ -85,13 +80,11 @@ public class ListGraph<T> implements Graph<T> {
         EdgeClass<T> edge2to1 = (EdgeClass<T>) getEdgeBetween(node2, node1);
         edge1to2.setWeight(weight);
         edge2to1.setWeight(weight);
-        // throw new UnsupportedOperationException("Unimplemented method 'setConnectionWeight'");
     }
 
     @Override
     public Set<T> getNodes() {
         return new HashSet<>(adjacencyList.keySet());
-        // throw new UnsupportedOperationException("Unimplemented method 'getNodes'");
     }
 
     @Override
@@ -100,9 +93,7 @@ public class ListGraph<T> implements Graph<T> {
         if (!hasNode(node)) {
             throw new NoSuchElementException("The node is not in the graph.");
         }
-        Collection<Edge<T>> edgeClasses = (Collection<Edge<T>>) (Collection<T>) adjacencyList.get(node);// might be a bad due to not understanding <T>
-        return edgeClasses;
-        // throw new UnsupportedOperationException("Unimplemented method 'getEdgesFrom'");
+        return new ArrayList<>(adjacencyList.get(node));
     }
 
     @Override
@@ -120,25 +111,23 @@ public class ListGraph<T> implements Graph<T> {
             }
         }
         return null;
-        // throw new UnsupportedOperationException("Unimplemented method 'getEdgeBetween'");
     }
 
     public String toString() {
-        String graph = "[";
+        StringBuilder graph = new StringBuilder("[");
         for (T node : adjacencyList.keySet()) {
-            graph += node + ", ";
+            graph.append(node).append(", "); // ugly commas at the end
             for (EdgeClass<T> edge : adjacencyList.get(node)) {
-                graph += edge.toString() + ", "; // ugly commas
+                graph.append(edge.toString()).append(", "); // ugly commas at the end
             }
         }
-        graph += "]";
-        return graph;
+        graph.append("]");
+        return graph.toString();
     }
 
     @Override
     public Iterator<T> iterator() {
         return adjacencyList.keySet().iterator();
-        // throw new UnsupportedOperationException("Unimplemented method 'iterator'");
     }
 }
 
