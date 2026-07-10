@@ -1,6 +1,7 @@
 package se.su.inlupp;
 
 public class EdgeClass<T> implements Edge<T> {
+
     private final T node;
     private int weight;
     private final String name;

@@ -93,7 +93,7 @@ public class ListGraph<T> implements Graph<T> {
         if (!hasNode(node)) {
             throw new NoSuchElementException("The node is not in the graph.");
         }
-        return new ArrayList<>(adjacencyList.get(node));
+        return new HashSet<>(adjacencyList.get(node));
     }
 
     @Override
