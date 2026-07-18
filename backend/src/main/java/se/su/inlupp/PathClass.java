@@ -4,14 +4,12 @@ import java.util.*;
 
 public class PathClass<T> implements Path<T> {
 
-    private final ListGraph<T> graph;
     private final T startNode;
     private final T endNode;
     private final List<T> traversedNodes = new ArrayList<>();
     private final List<Edge<T>> traversedEdges = new ArrayList<>();
 
-    public PathClass(ListGraph<T> graph, T startNode, T endNode) {
-        this.graph = graph;
+    public PathClass(T startNode, T endNode) {
         this.startNode = startNode;
         this.endNode = endNode;
     }
@@ -48,6 +46,7 @@ public class PathClass<T> implements Path<T> {
                 path.append(traversedEdges.get(i).toString());
             }
         }
+        path.append(getTotalWeight());
         return path.toString();
     }
 
