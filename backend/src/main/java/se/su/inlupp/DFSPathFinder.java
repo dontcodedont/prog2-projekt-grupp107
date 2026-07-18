@@ -4,29 +4,52 @@ import java.util.*;
 
 public class DFSPathFinder<T> implements PathFinder<T> {
 
-  @Override
-  public Path<T> findPath(Graph<T> graph, T from, T to) {
-    if (!graph.hasNode(from) || !graph.hasNode(to)) {
-      return null;
+    @Override
+    public Path<T> findPath(Graph<T> graph, T from, T to) {
+        if (!graph.hasNode(from) || !graph.hasNode(to)) {
+            return null;
+        }
+        Set<T> visited = new HashSet<>();
+        Map<T, Edge<T>> nodeToPredecessorEdge = new HashMap<>();
+        Map<T, T> predecessors = new HashMap<>();
+        boolean found = pathExplorer(graph, from, to, visited, predecessors, nodeToPredecessorEdge);
+        if (!found) {
+            return null;
+        }
+        return reconstructPath(from, to, predecessors, nodeToPredecessorEdge);
     }
-    Set<T> visited = new HashSet<>();
 
-    // start creating a path from the beginning to add current node to traversedNodes along the way
-      // OR to avoid having to remove irrelevant nodes after realizing that the path is wrong make a separate visitedNodes list for this class
-    // is "current" the "to" node, then reconstruct the taken path
-      // to reconstruct the path we need to know the "parent" of "current" up until the "from" node with a linkedList or hashMap?
-    // look at the current node's neighbors if they've not been visited yet make that one the new current node
-    // put the other neighbors on a "stack" or a "to be explored list"
-    // throw new UnsupportedOperationException("Unimplemented method 'findPath'");
-    return null; // todo remove
-  }
+    public boolean pathExplorer(Graph<T> graph, T current, T end, Set<T> visited, Map<T, T> predecessors, Map<T, Edge<T>> nodeToPredecessorEdge) {
+        if (current.equals(end)) {
+            return true;
+        }
+        visited.add(current);
+        for (Edge<T> edge : graph.getEdgesFrom(current)) {
+            T neighbor = edge.getDestination();
+            if (!visited.contains(neighbor)) {
+                predecessors.put(neighbor, current);
+                nodeToPredecessorEdge.put(neighbor, edge);
+                if (pathExplorer(graph, neighbor, end, visited, predecessors, nodeToPredecessorEdge)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-  public boolean helper() {
-    return false;
-  }
-
-  public Path<T> reconstructPath() {
-    return null;
-  }
+    public Path<T> reconstructPath(T from, T to, Map<T, T> predecessors, Map<T, Edge<T>> nodeToPredecessorEdge) {
+        LinkedList<T> orderedNodes = new LinkedList<>();
+        LinkedList<Edge<T>> orderedEdges = new LinkedList<>();
+        T current = to;
+        orderedNodes.addFirst(current);
+        while (!current.equals(from)) {
+            Edge<T> edgeTaken = nodeToPredecessorEdge.get(current);
+            T parent = predecessors.get(current);
+            orderedEdges.addFirst(edgeTaken);
+            orderedNodes.addFirst(parent);
+            current = parent;
+        }
+        return new PathClass<>(from, to, orderedNodes, orderedEdges);
+    }
 }
 

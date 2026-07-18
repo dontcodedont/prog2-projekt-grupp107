@@ -6,12 +6,14 @@ public class PathClass<T> implements Path<T> {
 
     private final T startNode;
     private final T endNode;
-    private final List<T> traversedNodes = new ArrayList<>();
-    private final List<Edge<T>> traversedEdges = new ArrayList<>();
+    private final List<T> traversedNodes;
+    private final List<Edge<T>> traversedEdges;
 
-    public PathClass(T startNode, T endNode) {
+    public PathClass(T startNode, T endNode, List<T> nodes, List<Edge<T>> edges) {
         this.startNode = startNode;
         this.endNode = endNode;
+        this.traversedNodes = nodes;
+        this.traversedEdges = edges;
     }
 
     public T getStart() {
