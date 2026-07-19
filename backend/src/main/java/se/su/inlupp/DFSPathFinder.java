@@ -10,8 +10,8 @@ public class DFSPathFinder<T> implements PathFinder<T> {
             return null;
         }
         Set<T> visited = new HashSet<>();
-        Map<T, Edge<T>> nodeToPredecessorEdge = new HashMap<>();
-        Map<T, T> predecessors = new HashMap<>();
+        Map<T, T> predecessors = new HashMap<>(); // maps the child node to the parent node so we can do map.get(node) to get a node's parent
+        Map<T, Edge<T>> nodeToPredecessorEdge = new HashMap<>(); // maps the node to the edge that was taken to get it
         boolean found = pathExplorer(graph, from, to, visited, predecessors, nodeToPredecessorEdge);
         if (!found) {
             return null;
@@ -19,8 +19,8 @@ public class DFSPathFinder<T> implements PathFinder<T> {
         return reconstructPath(from, to, predecessors, nodeToPredecessorEdge);
     }
 
-    public boolean pathExplorer(Graph<T> graph, T current, T end, Set<T> visited, Map<T, T> predecessors, Map<T, Edge<T>> nodeToPredecessorEdge) {
-        if (current.equals(end)) {
+    public boolean pathExplorer(Graph<T> graph, T current, T to, Set<T> visited, Map<T, T> predecessors, Map<T, Edge<T>> nodeToPredecessorEdge) {
+        if (current.equals(to)) {
             return true;
         }
         visited.add(current);
@@ -29,7 +29,7 @@ public class DFSPathFinder<T> implements PathFinder<T> {
             if (!visited.contains(neighbor)) {
                 predecessors.put(neighbor, current);
                 nodeToPredecessorEdge.put(neighbor, edge);
-                if (pathExplorer(graph, neighbor, end, visited, predecessors, nodeToPredecessorEdge)) {
+                if (pathExplorer(graph, neighbor, to, visited, predecessors, nodeToPredecessorEdge)) {
                     return true;
                 }
             }

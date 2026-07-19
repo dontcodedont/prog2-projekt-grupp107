@@ -18,7 +18,7 @@ public class ListGraph<T> implements Graph<T> {
         }
         if (adjacencyList.get(node).isEmpty()) {
             adjacencyList.remove(node);
-        } else { // no need to crate a copy of adjacencyList to search through since the lambda-expression handles it
+        } else {
             adjacencyList.values().forEach(nodes -> nodes.removeIf(edge -> edge.getDestination().equals(node)));
             adjacencyList.remove(node);
         }
